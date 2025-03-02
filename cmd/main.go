@@ -1,41 +1,41 @@
 package main
 
 import (
-	"Api-Go-Secretaria/controller"
-	"Api-Go-Secretaria/db"
-	"Api-Go-Secretaria/repository"
-	"Api-Go-Secretaria/usecase"
+	"github.com/LucasPaz-7/Secretaria_Api_Go/controller"
+	"github.com/LucasPaz-7/Secretaria_Api_Go/db"
+	"github.com/LucasPaz-7/Secretaria_Api_Go/repository"
+	"github.com/LucasPaz-7/Secretaria_Api_Go/usecase"
 	"log"
 	"os"
 
+	"github.com/LucasPaz-7/Secretaria_Api_Go/model"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	router := gin.Default()
+    router := gin.Default()
 
-	// Conecta ao banco de dados
-	dbConnection, err := db.ConnectDB()
-	if err != nil {
-		log.Fatalf("Erro ao conectar ao banco: %v", err)
-	}
+    // Conecta ao banco de dados
+    dbConnection, err := db.ConnectDB()
+    if err != nil {
+        log.Fatalf("Erro ao conectar ao banco: %v", err)
+    }
 
-	// Inicializa as camadas para a API de Login
-	// Camada de repositório
-	userRepository := repository.NewUserRepository(dbConnection)
+    // Cria a tabela de usuários automaticamente
+    dbConnection.AutoMigrate(&model.User{})
 
-	// Camada de usecase
-	userUseCase := usecase.NewUserUseCase(userRepository)
+    // Inicializa as camadas
+    userRepository := repository.NewUserRepository(dbConnection)
+    userUseCase := usecase.NewUserUseCase(userRepository)
+    loginController := controller.NewLoginController(userUseCase)
 
-	// Camada de controller
-	loginController := controller.NewLoginController(userUseCase)
+    // Rotas
+    router.POST("/login", loginController.Login)
 
-	// Rotas
-	router.POST("/login", loginController.Login)
-
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
-	}
-	router.Run(":" + port)
+    // Inicia o servidor
+    port := os.Getenv("PORT")
+    if port == "" {
+        port = "8080"
+    }
+    router.Run(":" + port)
 }
