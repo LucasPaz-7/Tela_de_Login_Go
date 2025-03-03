@@ -3,7 +3,6 @@ package db
 import (
 	"fmt"
 	"os"
-	"errors"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -12,44 +11,44 @@ func ConnectDB() (*gorm.DB, error) {
 	// Obter configurações do banco de dados das variáveis de ambiente
 	host := os.Getenv("DB_HOST")
 	if host == "" {
-		return nil, errors.New("variável de ambiente DB_HOST não definida")
+		host = "dpg-cv3288an91rc73c3ofpg-a.oregon-postgres.render.com"
 	}
 	
 	user := os.Getenv("DB_USER")
 	if user == "" {
-		return nil, errors.New("variável de ambiente DB_USER não definida")
+		user = "lucas"
 	}
 	
 	password := os.Getenv("DB_PASSWORD")
 	if password == "" {
-		return nil, errors.New("variável de ambiente DB_PASSWORD não definida")
+		password = "UMLfiJKg4bpyJD3b8EN4xAeJK14uZQoP"
 	}
 	
 	dbname := os.Getenv("DB_NAME")
 	if dbname == "" {
-		return nil, errors.New("variável de ambiente DB_NAME não definida")
+		dbname = "secretaria_db_y3iu"
 	}
 	
 	port := os.Getenv("DB_PORT")
 	if port == "" {
-		return nil, errors.New("variável de ambiente DB_PORT não definida")
+		port = "5432"
 	}
 
 	// Montar string de conexão
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=require", 
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s", 
 		host, user, password, dbname, port)
 
 	// Estabelecer conexão
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		return nil, fmt.Errorf("erro ao conectar ao banco de dados: %v", err)
+		return nil, err
 	}
 
 	// Testar a conexão
 	sqlDB, _ := db.DB()
 	err = sqlDB.Ping()
 	if err != nil {
-		return nil, fmt.Errorf("erro ao testar conexão com o banco: %v", err)
+		return nil, err
 	}
 
 	return db, nil
