@@ -42,6 +42,9 @@ func main() {
     loginController := controller.NewLoginController(userUseCase)
 
     // Rotas
+    router.GET(("/"), func(c *gin.Context) {
+        c.JSON(200, gin.H{  "message": "Secretaria API" })
+    })
     router.POST("/login", loginController.Login)
 
     // Inicia o servidor
