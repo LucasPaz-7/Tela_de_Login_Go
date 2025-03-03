@@ -11,27 +11,27 @@ func ConnectDB() (*gorm.DB, error) {
 	// Obter configurações do banco de dados das variáveis de ambiente
 	host := os.Getenv("DB_HOST")
 	if host == "" {
-		host = "localhost"
+		host = "DB_HOST"
 	}
 	
 	user := os.Getenv("DB_USER")
 	if user == "" {
-		user = "postgres"
+		user = "DB_USER"
 	}
 	
 	password := os.Getenv("DB_PASSWORD")
 	if password == "" {
-		password = "1234"
+		password = "DB_PASSWORD"
 	}
 	
 	dbname := os.Getenv("DB_NAME")
 	if dbname == "" {
-		dbname = "postgres"
+		dbname = "DB_NAME"
 	}
 	
 	port := os.Getenv("DB_PORT")
 	if port == "" {
-		port = "5434"
+		port = "DB_PORT"
 	}
 
 	// Montar string de conexão
